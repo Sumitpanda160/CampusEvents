@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Registrations | CampusEvents</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>My Registrations</h1>
+        <p>Events you have successfully registered for.</p>
+
+        <a href="{{ url_for('home') }}">← Back to Events</a>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if registrations %}
+
+            {% for registration in registrations %}
+
+                <div class="event-card">
+
+                    <h2>{{ registration.title }}</h2>
+
+                    <p>Category: {{ registration.category or 'General' }}</p>
+
+                    <p>
+                        Date:
+                        {{ registration.event_date.strftime('%d %B %Y') }}
+                    </p>
+
+                    <p>
+                        Time:
+                        {% if registration.event_time %}
+                            {{ registration.event_time }}
+                        {% else %}
+                            Time TBA
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        Venue: {{ registration.venue or 'To be announced' }}
+                    </p>
+
+                    <p>
+                        Registered On:
+                        {% if registration.registered_at %}
+                            {{ registration.registered_at.strftime('%d %B %Y, %I:%M %p') }}
+                        {% else %}
+                            Not available
+                        {% endif %}
+                    </p>
+
+                    <p>Status: {{ registration.status|capitalize }}</p>
+
+                    {% if registration.status == 'registered' %}
+
+                        <form action="{{ url_for('cancel_registration', registration_id=registration.id) }}"
+                              method="POST"
+                              onsubmit="return confirm('Are you sure you want to cancel this registration?');">
+
+                            <button type="submit" class="login-btn">
+                                Cancel Registration
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <p> This registration has been cancelled.</p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <h2>No Registrations Yet!</h2>
+            <p>You haven't registered for any events.</p>
+
+            <a href="{{ url_for('home') }}">Explore Events</a>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>

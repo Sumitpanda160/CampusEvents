@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusEvents | College Event Portal</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo">Campus<span>Events.</span></a>
+
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#events">Explore Events</a>
+            <a href="#about">About</a>
+        </div>
+
+        <div class="nav-buttons">
+            {% if session.get('user_id') %}
+                <span>Hi, {{ session.get('user_name') }}</span>
+
+                <a href="{{ url_for('my_registrations') }}" class="login-btn">
+                    My Registrations
+                </a>
+
+                <a href="{{ url_for('logout') }}" class="login-btn">
+                    Logout
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+                <a href="{{ url_for('signup') }}" class="signup-btn">Get Started</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="hero" id="home">
+            <div class="hero-content">
+
+                <div class="tag">
+                    <span class="dot"></span>
+                    YOUR CAMPUS, YOUR MOMENT
+                </div>
+
+                <h1>
+                    Discover Events.<br>
+                    <span>Create Memories.</span>
+                </h1>
+
+                <p>
+                    Explore exciting college events, connect with
+                    your community and make every campus moment count.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="#events" class="primary-btn">Explore Events →</a>
+                    <a href="#about" class="secondary-btn">Learn More</a>
+                </div>
+
+                <div class="hero-stats">
+                    <div>
+                        <h3>50+</h3>
+                        <p>Events</p>
+                    </div>
+
+                    <div>
+                        <h3>1000+</h3>
+                        <p>Students</p>
+                    </div>
+
+                    <div>
+                        <h3>20+</h3>
+                        <p>Clubs</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-card">
+                    <div class="visual-icon">✦</div>
+                    <p class="visual-label">CAMPUS EXPERIENCE</p>
+                    <h2>Make Your<br>Moment Special.</h2>
+                    <div class="visual-line"></div>
+                    <p class="visual-bottom">Connect · Participate · Celebrate</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="events-section" id="events">
+
+            <div class="section-heading">
+                <div>
+                    <p class="section-tag">WHAT'S HAPPENING</p>
+                    <h2>Explore Upcoming Events</h2>
+                </div>
+
+                <a href="#events" class="view-all">View All Events →</a>
+            </div>
+
+            <!-- Event Search -->
+            <div class="search-box">
+                <input
+                    type="text"
+                    id="eventSearch"
+                    placeholder="Search events by name or category..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="event-grid">
+
+                {% for event in events %}
+
+                <div class="event-card">
+
+                    <div class="event-image
+                        {% if event.category == 'Technology' %}tech
+                        {% else %}{{ event.category|lower if event.category else 'tech' }}
+                        {% endif %}">
+                        <span>{{ event.category or 'EVENT' }}</span>
+                    </div>
+
+                    <div class="event-info">
+
+                        <p class="event-date">
+                            {{ event.event_date.strftime('%d %B %Y') }}
+                        </p>
+
+                        <h3>{{ event.title }}</h3>
+
+                        <p>{{ event.description or 'Join us and enjoy this exciting campus event.' }}</p>
+
+                        <p class="event-venue">
+                            Venue: {{ event.venue or 'Venue to be announced' }}
+                        </p>
+
+                        <p class="event-seats">
+                            Total Seats: {{ event.capacity }}
+                        </p>
+
+                        <p class="event-seats">
+                            Registered: {{ event.registered_count }}
+                            |
+                            Available: {{ event.capacity - event.registered_count }}
+                        </p>
+
+                        {% if event.user_registered %}
+
+                            <button class="register-link" disabled>
+                                Already Registered
+                            </button>
+
+                        {% elif event.registered_count >= event.capacity %}
+
+                            <button class="register-link" disabled>
+                                Event Full
+                            </button>
+
+                        {% else %}
+
+                            <a href="{{ url_for('register_event', event_id=event.id) }}" class="register-link">
+                                Register Now →
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                {% else %}
+
+                <p>No upcoming events available right now.</p>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+        <section class="about-section" id="about">
+            <p class="section-tag">ABOUT OUR PLATFORM</p>
+            <h2>Everything Happens Here.</h2>
+
+            <p>
+                CampusEvents makes college event discovery and registration
+                simple. Find events, participate and enjoy your campus life.
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        <a href="/" class="logo">Campus<span>Events.</span></a>
+        <p>© 2026 CampusEvents. All rights reserved.</p>
+    </footer>
+
+    <!-- Event Search JavaScript -->
+    <script>
+        const eventSearch = document.getElementById("eventSearch");
+
+        eventSearch.addEventListener("input", function () {
+            const searchValue = this.value.toLowerCase();
+            const eventCards = document.querySelectorAll(".event-card");
+
+            eventCards.forEach(function (card) {
+                const eventText = card.innerText.toLowerCase();
+
+                if (eventText.includes(searchValue)) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

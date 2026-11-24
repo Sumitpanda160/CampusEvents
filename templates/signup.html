@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup | CampusEvents</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #080d1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .signup-box {
+            width: 380px;
+            padding: 35px;
+            background: #111a2e;
+            border: 1px solid #263653;
+            border-radius: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h1 span {
+            color: #3985ff;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #9ca9bd;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #080d1a;
+            border: 1px solid #344563;
+            border-radius: 7px;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            background: #347fff;
+            border: none;
+            border-radius: 7px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .bottom {
+            text-align: center;
+            margin-top: 20px;
+            color: #aab5c7;
+        }
+
+        a {
+            color: #4d91ff;
+            text-decoration: none;
+        }
+
+        .message {
+            color: #ff8585;
+            margin-top: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="signup-box">
+
+        <h1>Campus<span>Events.</span></h1>
+        <p class="subtitle">Create your student account</p>
+
+        <form method="POST" action="{{ url_for('signup') }}">
+
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="Enter your name" required>
+
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Create password" required>
+
+            <button type="submit">Create Account</button>
+
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <p class="message">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <p class="bottom">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Login</a>
+        </p>
+
+    </div>
+
+</body>
+</html>
